@@ -1,0 +1,964 @@
+Baseline:
+---------
+A had 236 initial placement options, 108 remain with current board
+B had 226 initial placement options, 104 remain with current board
+C had 176 initial placement options, 66 remain with current board
+G had 93 initial placement options, 38 remain with current board
+I had 104 initial placement options, 44 remain with current board
+K had 35 initial placement options, 18 remain with current board
+L had 28 initial placement options, 13 remain with current board
+Brute-force: 88976531804160, Current board: 290036837376
+Success -> solved the board after 101989 of 290036837377 recursive steps
+Solving took 17.9094 seconds (175599ns/recursion)
+
+
+-> Updating all remaining placement options after a successful placement...
+Success -> solved the board after 13472 of 290036837377 recursive steps
+Solving took 36.2867 seconds (2693292ns/recursion)
+
+
+
+-> Updating only one (next to process) remaining placement option after a successful placement...
+Success -> solved the board after 13472 of 290036837377 recursive steps
+Solving took 25.2203 seconds (1871912ns/recursion)
+
+
+
+-> Enforce to process unplaced pieces ordered by lowest placement options
+Choosing little options first ->  25 secs (see above - by accident this example uses almost the ideal "little first" strategy)
+Choosing little options first -> 178 secs (reversed the insertion order to _currUnplacedPieces)
+
+
+-> removePlacedPieceFast and tryPlacePieceFast (without check or statistic stuff) 
+==> bringt kaum was -> wieder entfernt
+
+
+-> Store bounding box of each orientation and use the x-/y-extent to reduce nested loop lengths in determinePlaceableOptions
+Brute-force: 88976531804160, Current board: 290036837376
+Success -> solved the board after 13472 of 290036837377 recursive steps
+Solving took 15.6666 seconds (1162812ns/recursion)
+==> GUT! Info: place only 4 pieces ->  255499 of 335561313669121 recursive steps, 322.401 seconds (1261844ns/recursion)
+
+-> Cache occupied fields of each placed piece to make removing faster
+Brute-force: 88976531804160, Current board: 290036837376
+Success -> solved the board after 13472 of 290036837377 recursive steps
+Solving took 17.9256 seconds (1330486ns/recursion)
+==> SCHLECHT - wird sogar langsamer -> wieder entfernt!
+
+
+-> filter placement options -> remove options that lead to >=1 field being unreachable or >=1 piece being unplaceable
+Brute-force: 25017272812224, Current board: 12463257600
+Success -> solved the board after 5900 of 12463257601 recursive steps
+Solving took 6.70658 seconds (1136516ns/recursion)
+place only 4 pieces -> 73341 of 16105559652001 recursive steps, 96.1899 seconds (1311525ns/recursion)
+
+
+-> Serialize/Deserialize the initial placement options (takes long now)
+This only reduces the startup time and the time before solving that is not measured
+However, during this I realized that in most cases where determinePlaceableOptions is called, it's sufficient to only consider
+the given piece's _initialPlacableOptions (except for the case where they are obtained for the first time).
+
+Brute-force: 25017272812224, Current board (reduced): 8987086080
+Success -> solved the board after 2074 of 8987086081 recursive steps
+Solving took 1.07174 seconds (516499ns/recursion)
+place only 4 pieces -> 17517 of 11335076427151 recursive steps, 9.75779 seconds (557015ns/recursion)
+place only 3 pieces -> 104746 of 3688956704160001 recursive steps, 63.5566 seconds (606762ns/recursion)
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Current times:  
+27.01. -> bfb1459 Ball Game: Testing many puzzles from file
+
+gert@DELL-NB-02:~/private/workspace/coding_puzzles/coding_puzzles/build$ time ./coding_puzzles --gtest_filter="Ball_Game.*"
+Note: Google Test filter = Ball_Game.*
+[==========] Running 16 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 16 tests from Ball_Game
+[ RUN      ] Ball_Game.Test001
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed A@7 at pos6/3
+
+Success -> placed B@4 at pos6/1
+
+Success -> placed C@5 at pos2/6
+
+Success -> placed D@2 at pos1/1
+
+Success -> placed E@4 at pos0/3
+
+Success -> placed F@0 at pos4/3
+
+Success -> placed G@2 at pos0/0
+
+Success -> placed H@2 at pos2/3
+
+Success -> placed I@3 at pos4/0
+
+Success -> placed J@1 at pos3/5
+
+Success -> placed K@0 at pos3/7
+
+
+
+Error: unknown command: # Missing:
+
+Error: unknown command: # p L 0 2 0
+
+
+L had 17 initial placement options, 1 remain with current board (reduced)
+Brute-force: 17, Current board (reduced): 1
+Success -> solved the board after 2 of 2 recursive steps
+Solving took 1.3959e-05 seconds (4653ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 G G G L I I . . . 
+1 G D L L L I B . . 
+2 G D D L I I B B . 
+3 E D . H H F B B A 
+4 E D H H F F A A A 
+5 E E H J J J J . . 
+6 . E C C C C . . . 
+7 . . C K K . . . . 
+8 . . . K K . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test001 (12 ms)
+[ RUN      ] Ball_Game.Test011
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed H@1 at pos0/0
+
+Success -> placed F@3 at pos1/0
+
+Success -> placed J@0 at pos0/2
+
+Success -> placed D@2 at pos1/3
+
+Success -> placed E@2 at pos2/4
+
+
+
+A had 206 initial placement options, 63 remain with current board (reduced)
+B had 194 initial placement options, 61 remain with current board (reduced)
+C had 164 initial placement options, 42 remain with current board (reduced)
+I had 84 initial placement options, 29 remain with current board (reduced)
+G had 81 initial placement options, 24 remain with current board (reduced)
+K had 33 initial placement options, 16 remain with current board (reduced)
+L had 17 initial placement options, 5 remain with current board (reduced)
+Brute-force: 25017272812224, Current board (reduced): 8987086080
+Success -> solved the board after 2074 of 8987086081 recursive steps
+Solving took 1.12867 seconds (543935ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 H F F I I L . . . 
+1 H H F I L L L . . 
+2 J H H I I L C C . 
+3 J D . G G G C K K 
+4 J D D E A G C K K 
+5 J D E E A G C . . 
+6 . D E B A A . . . 
+7 . . E B B . . . . 
+8 . . . B B . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test011 (2113 ms)
+[ RUN      ] Ball_Game.Test043
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed G@1 at pos0/0
+
+Success -> placed C@1 at pos1/0
+
+
+A had 206 initial placement options, 120 remain with current board (reduced)
+B had 194 initial placement options, 115 remain with current board (reduced)
+D had 149 initial placement options, 83 remain with current board (reduced)
+E had 146 initial placement options, 84 remain with current board (reduced)
+F had 134 initial placement options, 85 remain with current board (reduced)
+I had 84 initial placement options, 52 remain with current board (reduced)
+H had 80 initial placement options, 48 remain with current board (reduced)
+J had 49 initial placement options, 1 remain with current board (reduced)
+K had 33 initial placement options, 21 remain with current board (reduced)
+L had 17 initial placement options, 10 remain with current board (reduced)
+Brute-force: 3073197465605448704, Current board (reduced): 4286662248960000
+Success -> solved the board after 472979 of 4286662248960001 recursive steps
+Solving took 287.327 seconds (607482ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 G C J J J J . . . 
+1 G C C C C E E . . 
+2 G G G E E E F F . 
+3 B B . K K I I F A 
+4 B B B K K I A A A 
+5 D D D D L I I . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test043 (297479 ms)
+[ RUN      ] Ball_Game.Test044
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed G@2 at pos0/0
+
+Success -> placed E@7 at pos1/0
+
+
+A had 206 initial placement options, 126 remain with current board (reduced)
+B had 194 initial placement options, 122 remain with current board (reduced)
+C had 164 initial placement options, 103 remain with current board (reduced)
+D had 149 initial placement options, 96 remain with current board (reduced)
+F had 134 initial placement options, 92 remain with current board (reduced)
+I had 84 initial placement options, 55 remain with current board (reduced)
+H had 80 initial placement options, 53 remain with current board (reduced)
+J had 49 initial placement options, 34 remain with current board (reduced)
+K had 33 initial placement options, 21 remain with current board (reduced)
+L had 17 initial placement options, 13 remain with current board (reduced)
+Brute-force: 5726340943055243264, Current board (reduced): 378361365413391360
+Success -> solved the board after 186825 of 378361365413391361 recursive steps
+Solving took 116.772 seconds (625029ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 G G G E E F . . . 
+1 G E E E J F F . . 
+2 G I I I J A A A . 
+3 C I . I J A B B B 
+4 C C C C J K K B B 
+5 D D D D L K K . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test044 (123353 ms)
+[ RUN      ] Ball_Game.Test045
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed G@3 at pos0/0
+
+Success -> placed B@2 at pos0/1
+
+
+A had 206 initial placement options, 132 remain with current board (reduced)
+C had 164 initial placement options, 106 remain with current board (reduced)
+D had 149 initial placement options, 97 remain with current board (reduced)
+E had 146 initial placement options, 97 remain with current board (reduced)
+F had 134 initial placement options, 91 remain with current board (reduced)
+I had 84 initial placement options, 58 remain with current board (reduced)
+H had 80 initial placement options, 57 remain with current board (reduced)
+J had 49 initial placement options, 33 remain with current board (reduced)
+K had 33 initial placement options, 23 remain with current board (reduced)
+L had 17 initial placement options, 12 remain with current board (reduced)
+Brute-force: -254628545628829696, Current board (reduced): 360736866493907904
+
+
+Success -> solved the board after 830803 of 360736866493907905 recursive steps
+Solving took 463.059 seconds (557362ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 G G G E E E . . . 
+1 B B G A A E E . . 
+2 B B G A C C C C . 
+3 B F . A C I I K K 
+4 F F J J J J I K K 
+5 D D D D L I I . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test045 (470128 ms)
+[ RUN      ] Ball_Game.Test046
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed J@0 at pos0/0
+
+Success -> placed K@0 at pos1/0
+
+
+A had 206 initial placement options, 152 remain with current board (reduced)
+B had 194 initial placement options, 137 remain with current board (reduced)
+C had 164 initial placement options, 119 remain with current board (reduced)
+D had 149 initial placement options, 109 remain with current board (reduced)
+E had 146 initial placement options, 108 remain with current board (reduced)
+F had 134 initial placement options, 101 remain with current board (reduced)
+I had 84 initial placement options, 65 remain with current board (reduced)
+G had 81 initial placement options, 58 remain with current board (reduced)
+H had 80 initial placement options, 59 remain with current board (reduced)
+L had 17 initial placement options, 13 remain with current board (reduced)
+Brute-force: -7676529538418667520, Current board (reduced): 8519604962793986880
+Success -> solved the board after 2217313 of 8519604962793986881 recursive steps
+Solving took 1391.65 seconds (627627ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 J K K D I I . . . 
+1 J K K D I F F . . 
+2 J E D D I I F B . 
+3 J E . D G G G B B 
+4 E E C C C C G B B 
+5 E A A A L C G . . 
+6 . A H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test046 (1400341 ms)
+[ RUN      ] Ball_Game.Test047
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed J@1 at pos0/0
+
+Success -> placed C@3 at pos0/1
+
+
+A had 206 initial placement options, 126 remain with current board (reduced)
+B had 194 initial placement options, 117 remain with current board (reduced)
+D had 149 initial placement options, 86 remain with current board (reduced)
+E had 146 initial placement options, 83 remain with current board (reduced)
+F had 134 initial placement options, 87 remain with current board (reduced)
+I had 84 initial placement options, 52 remain with current board (reduced)
+G had 81 initial placement options, 46 remain with current board (reduced)
+H had 80 initial placement options, 48 remain with current board (reduced)
+K had 33 initial placement options, 21 remain with current board (reduced)
+L had 17 initial placement options, 10 remain with current board (reduced)
+Brute-force: -1319707235490225152, Current board (reduced): 220736377221534720
+Success -> solved the board after 85733 of 220736377221534721 recursive steps
+Solving took 50.7526 seconds (591977ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 J J J J A E . . . 
+1 C C C C A E E . . 
+2 G G G C A A E B . 
+3 G I . I F F E B B 
+4 G I I I F K K B B 
+5 D D D D L K K . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test047 (56834 ms)
+[ RUN      ] Ball_Game.Test048
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed A@4 at pos0/0
+
+Success -> placed I@2 at pos1/0
+
+
+B had 194 initial placement options, 112 remain with current board (reduced)
+C had 164 initial placement options, 93 remain with current board (reduced)
+D had 149 initial placement options, 87 remain with current board (reduced)
+E had 146 initial placement options, 86 remain with current board (reduced)
+F had 134 initial placement options, 83 remain with current board (reduced)
+G had 81 initial placement options, 42 remain with current board (reduced)
+H had 80 initial placement options, 53 remain with current board (reduced)
+J had 49 initial placement options, 31 remain with current board (reduced)
+K had 33 initial placement options, 20 remain with current board (reduced)
+L had 17 initial placement options, 11 remain with current board (reduced)
+Brute-force: -1926234168007952896, Current board (reduced): 98198827455294720
+
+
+Success -> solved the board after 2322303 of 98198827455294721 recursive steps
+Solving took 1329.28 seconds (572395ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 A I I I K K . . . 
+1 A I F I K K D . . 
+2 A A F F D D D D . 
+3 G C . J J J J B B 
+4 G C C C C L B B B 
+5 G G G E L L L . . 
+6 . H H E E L . . . 
+7 . . H H E . . . . 
+8 . . . H E . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test048 (1336237 ms)
+[ RUN      ] Ball_Game.Test049
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed A@5 at pos0/0
+
+Success -> placed K@0 at pos1/1
+
+
+B had 194 initial placement options, 140 remain with current board (reduced)
+C had 164 initial placement options, 116 remain with current board (reduced)
+D had 149 initial placement options, 104 remain with current board (reduced)
+E had 146 initial placement options, 101 remain with current board (reduced)
+F had 134 initial placement options, 99 remain with current board (reduced)
+I had 84 initial placement options, 63 remain with current board (reduced)
+G had 81 initial placement options, 54 remain with current board (reduced)
+H had 80 initial placement options, 58 remain with current board (reduced)
+J had 49 initial placement options, 36 remain with current board (reduced)
+L had 17 initial placement options, 13 remain with current board (reduced)
+Brute-force: 5158718885275875328, Current board (reduced): 1559495365631723520
+
+Success -> solved the board after 2191837 of 1559495365631723521 recursive steps
+Solving took 1173.89 seconds (535573ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 A A A C G F . . . 
+1 A K K C G F F . . 
+2 J K K C G G G B . 
+3 J D . C C I I B B 
+4 J D D E E E I B B 
+5 J D E E L I I . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test049 (1180623 ms)
+[ RUN      ] Ball_Game.Test050
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed A@6 at pos0/0
+
+Success -> placed E@4 at pos0/1
+
+
+B had 194 initial placement options, 132 remain with current board (reduced)
+C had 164 initial placement options, 105 remain with current board (reduced)
+D had 149 initial placement options, 99 remain with current board (reduced)
+F had 134 initial placement options, 94 remain with current board (reduced)
+I had 84 initial placement options, 63 remain with current board (reduced)
+G had 81 initial placement options, 52 remain with current board (reduced)
+H had 80 initial placement options, 52 remain with current board (reduced)
+J had 49 initial placement options, 34 remain with current board (reduced)
+K had 33 initial placement options, 24 remain with current board (reduced)
+L had 17 initial placement options, 12 remain with current board (reduced)
+Brute-force: -8941793169059316736, Current board (reduced): 215151768380989440
+
+
+Success -> solved the board after 2040343 of 215151768380989441 recursive steps
+Solving took 1017.06 seconds (498473ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 A A C C C C . . . 
+1 E A C J J J J . . 
+2 E A F F G G G B . 
+3 E E . F H H G B B 
+4 I E I H H L G B B 
+5 I I I H L L L . . 
+6 . D D D D L . . . 
+7 . . D K K . . . . 
+8 . . . K K . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test050 (1023577 ms)
+[ RUN      ] Ball_Game.Test051
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed E@4 at pos0/0
+
+Success -> placed A@4 at pos0/3
+
+
+B had 194 initial placement options, 123 remain with current board (reduced)
+C had 164 initial placement options, 100 remain with current board (reduced)
+D had 149 initial placement options, 95 remain with current board (reduced)
+F had 134 initial placement options, 89 remain with current board (reduced)
+I had 84 initial placement options, 54 remain with current board (reduced)
+G had 81 initial placement options, 49 remain with current board (reduced)
+H had 80 initial placement options, 50 remain with current board (reduced)
+J had 49 initial placement options, 34 remain with current board (reduced)
+K had 33 initial placement options, 21 remain with current board (reduced)
+L had 17 initial placement options, 11 remain with current board (reduced)
+Brute-force: -8941793169059316736, Current board (reduced): 108061120005300000
+Success -> solved the board after 1159065 of 108061120005300001 recursive steps
+Solving took 577.617 seconds (498347ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 E F F G G G . . . 
+1 E F I I I G H . . 
+2 E E I C I G H H . 
+3 A E . C C C C H H 
+4 A D D D D J J J J 
+5 A A L D B B B . . 
+6 . L L L B B . . . 
+7 . . L K K . . . . 
+8 . . . K K . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test051 (584129 ms)
+[ RUN      ] Ball_Game.Test052
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed E@3 at pos0/0
+
+Success -> placed C@2 at pos0/1
+
+
+A had 206 initial placement options, 128 remain with current board (reduced)
+B had 194 initial placement options, 111 remain with current board (reduced)
+D had 149 initial placement options, 96 remain with current board (reduced)
+F had 134 initial placement options, 84 remain with current board (reduced)
+I had 84 initial placement options, 50 remain with current board (reduced)
+G had 81 initial placement options, 48 remain with current board (reduced)
+H had 80 initial placement options, 49 remain with current board (reduced)
+J had 49 initial placement options, 33 remain with current board (reduced)
+K had 33 initial placement options, 18 remain with current board (reduced)
+L had 17 initial placement options, 12 remain with current board (reduced)
+Brute-force: -6507598425185476096, Current board (reduced): 96041399589273600
+Success -> solved the board after 31749 of 96041399589273601 recursive steps
+Solving took 17.2923 seconds (544638ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 E E E G G G . . . 
+1 C C E E A G F . . 
+2 C I I I A G F F . 
+3 C I . I A A B B B 
+4 C J J J J K K B B 
+5 D D D D L K K . . 
+6 . D H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test052 (22749 ms)
+[ RUN      ] Ball_Game.Test053
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed F@1 at pos0/0
+
+Success -> placed B@3 at pos1/0
+
+
+A had 206 initial placement options, 125 remain with current board (reduced)
+C had 164 initial placement options, 101 remain with current board (reduced)
+D had 149 initial placement options, 90 remain with current board (reduced)
+E had 146 initial placement options, 84 remain with current board (reduced)
+I had 84 initial placement options, 46 remain with current board (reduced)
+G had 81 initial placement options, 42 remain with current board (reduced)
+H had 80 initial placement options, 45 remain with current board (reduced)
+J had 49 initial placement options, 33 remain with current board (reduced)
+K had 33 initial placement options, 18 remain with current board (reduced)
+L had 17 initial placement options, 12 remain with current board (reduced)
+Brute-force: -7450017523153294336, Current board (reduced): 59148060602400000
+Success -> solved the board after 373271 of 59148060602400001 recursive steps
+Solving took 216.672 seconds (580467ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 F B B B C C . . . 
+1 F F B B C K K . . 
+2 J I I G C K K D . 
+3 J I . G C D D D D 
+4 J I I G G G E E E 
+5 J A A A L E E . . 
+6 . A H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test053 (223999 ms)
+[ RUN      ] Ball_Game.Test054
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed F@2 at pos0/0
+
+Success -> placed D@1 at pos1/0
+
+
+A had 206 initial placement options, 128 remain with current board (reduced)
+B had 194 initial placement options, 106 remain with current board (reduced)
+C had 164 initial placement options, 102 remain with current board (reduced)
+E had 146 initial placement options, 80 remain with current board (reduced)
+I had 84 initial placement options, 52 remain with current board (reduced)
+G had 81 initial placement options, 48 remain with current board (reduced)
+H had 80 initial placement options, 43 remain with current board (reduced)
+J had 49 initial placement options, 35 remain with current board (reduced)
+K had 33 initial placement options, 22 remain with current board (reduced)
+L had 17 initial placement options, 11 remain with current board (reduced)
+Brute-force: -4128858497817511936, Current board (reduced): 100647372246220800
+Success -> solved the board after 87871 of 100647372246220801 recursive steps
+Solving took 54.2295 seconds (617142ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 F F D E E E . . . 
+1 F D D D D E E . . 
+2 C C C C J J J J . 
+3 A A . C G G G K K 
+4 A B B I I I G K K 
+5 A B B I L I G . . 
+6 . B H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test054 (60338 ms)
+[ RUN      ] Ball_Game.Test055
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed F@3 at pos0/0
+
+Success -> placed A@0 at pos1/0
+
+
+B had 194 initial placement options, 118 remain with current board (reduced)
+C had 164 initial placement options, 102 remain with current board (reduced)
+D had 149 initial placement options, 95 remain with current board (reduced)
+E had 146 initial placement options, 92 remain with current board (reduced)
+I had 84 initial placement options, 58 remain with current board (reduced)
+G had 81 initial placement options, 45 remain with current board (reduced)
+H had 80 initial placement options, 49 remain with current board (reduced)
+J had 49 initial placement options, 35 remain with current board (reduced)
+K had 33 initial placement options, 24 remain with current board (reduced)
+L had 17 initial placement options, 13 remain with current board (reduced)
+Brute-force: -8090603535807056896, Current board (reduced): 146910500204832000
+
+Success -> solved the board after 1368087 of 146910500204832001 recursive steps
+Solving took 761.035 seconds (556276ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 F F A G G G . . . 
+1 J F A G E E E . . 
+2 J A A G H H E E . 
+3 J D . B B H H K K 
+4 J D C B B L H K K 
+5 D D C B L L L . . 
+6 . D C I I L . . . 
+7 . . C C I . . . . 
+8 . . . I I . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test055 (768259 ms)
+[ RUN      ] Ball_Game.Test056
+Read and applied cache file: /tmp/initPlaceableOptionsCache.txt
+Enter a command: 
+h ... show this help text
+d ... draw board
+r ... reset board to empty
+s ... show all pieces (in base orientation)
+s <piece_id> ... show details for piece
+p <piece_id> <orientation_id> <x> <y> ... place a piece
+x <piece_id> ... remove a piece
+f ... find a placement for all unplaced pieces
+q...quit
+Success -> placed K@0 at pos0/0
+
+Success -> placed G@0 at pos0/0
+
+
+A had 206 initial placement options, 137 remain with current board (reduced)
+B had 194 initial placement options, 138 remain with current board (reduced)
+C had 164 initial placement options, 111 remain with current board (reduced)
+D had 149 initial placement options, 100 remain with current board (reduced)
+E had 146 initial placement options, 104 remain with current board (reduced)
+F had 134 initial placement options, 100 remain with current board (reduced)
+I had 84 initial placement options, 63 remain with current board (reduced)
+H had 80 initial placement options, 59 remain with current board (reduced)
+J had 49 initial placement options, 34 remain with current board (reduced)
+L had 17 initial placement options, 13 remain with current board (reduced)
+Brute-force: -3732876186267611136, Current board (reduced): 3585673999776960000
+Success -> solved the board after 1069701 of 3585673999776960001 recursive steps
+Solving took 659.484 seconds (616512ns/recursion)
+
+  0 1 2 3 4 5 6 7 8 
+0 K K G C I I . . . 
+1 K K G C I F F . . 
+2 G G G C I I F D . 
+3 B B . C C D D D D 
+4 B B J J J J E E E 
+5 B A A A L E E . . 
+6 . A H L L L . . . 
+7 . . H H L . . . . 
+8 . . . H H . . . . 
+
+Free Fields: 0
+Occupied Fields: 55
+
+
+
+Quit!
+Program exited normally -> return code: 0
+[       OK ] Ball_Game.Test056 (667227 ms)
+[----------] 16 tests from Ball_Game (8217398 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 1 test suite ran. (8217398 ms total)
+[  PASSED  ] 16 tests.
+
+
+
+
+real    136m57,406s
+user    136m56,813s
+sys     0m0,040s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Next tries:
+-----------
+
+* Divide and Conquer:
+  - Sortiere unplaced pieces nach wenigsten placements options (kleinste first)
+  - Bilde "gute" Subsets um ALLE möglichen Lösungen zu finden und so placement options zu reduzieren
+  Möglichkeiten für Subsets
+  -> N disjunkte subsets -> parallel abzuarbeiten
+      - möglichst gleich große (zB kleinster und größter, zweitkleinster und zweitgrößter, etc...)
+      - Größere subsets mit den kleinen Werten, kleinere mit den großen Werten
+  -> Alle kleinsten bis zu einem bestimmten maximalprodukt, placement options reduzieren, 
+     weitere dazunehmen, placement options reduzieren, ... -> sequentiell
+
+
+     
+     
+
+
+
+
+
+
+
+
+
+
+
+
+     
+     
+     
