@@ -138,8 +138,8 @@ void Board::draw() const
 
     cout << r << " ";  // header on y-axis
     for (size_t c=0; c<row.size(); c++) {
-      const auto& field = row[c];
-      cout << field << " ";
+      const auto& pieceId = row[c];
+      cout << Piece::getColorForId(pieceId) + pieceId + Color::RESET << " ";
     }
     cout << endl;
   }
@@ -155,7 +155,7 @@ void Board::showAllPieces() const
   cout << "----------------------------------------" << endl;
   size_t sumUnplacedExtents = 0;
   for (const auto& p : _currUnplacedPieces) {
-    cout << p->id() << ": Supports " << p->getNumOrientations() << " orientations" << endl;
+    cout << p->idWithColor() << ": Supports " << p->getNumOrientations() << " orientations" << endl;
     p->drawBaseOrientation();
     sumUnplacedExtents += p->getExtent();
   }
@@ -164,7 +164,7 @@ void Board::showAllPieces() const
   cout << "----------------------------------------" << endl;
   size_t sumPlacedExtents = 0;
   for (const auto& [p, placement] : _currPlacedPieces) {
-    cout << p->id() << ": Placed in orientation " << placement._orientationIdx
+    cout << p->idWithColor() << ": Placed in orientation " << placement._orientationIdx
          << " at position " << placement._topLeftOnBoard.x << "," << placement._topLeftOnBoard.y << endl;
     p->drawBaseOrientation();
     sumPlacedExtents += p->getExtent();
@@ -215,7 +215,7 @@ void Board::showPieceDetails(char pieceId) const
     return;
   }
 
-  cout << piece->id() << " is currently";
+  cout << piece->idWithColor() << " is currently";
   if (placed) cout << " placed in orientation " << placedorientation << " at position " << placedPos.x << "," << placedPos.y;
   else        cout << " unplaced";
   cout << " and supports " << piece->getNumOrientations() << " orientations..." << endl;
@@ -396,7 +396,7 @@ std::map<Piece*, std::vector<BoardPlacementEntry>> Board::getRemainingPlacementO
     remainingOptions[piece] = remainingOptionsForPiece;
     numPossibilitiesCurrentBoard *= remainingOptionsForPiece.size();
     if (printLog) {
-      cout << piece->id() << " had " << piece->getNumInitialPlaceableOptions() << " initial placement options, "
+      cout << piece->idWithColor() << " had " << piece->getNumInitialPlaceableOptions() << " initial placement options, "
            << remainingOptionsForPiece.size() << " remain with current board " << reduceInfo << endl;
     }
   }

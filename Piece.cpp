@@ -104,8 +104,55 @@ std::vector<BoardPlacementEntry> Piece::reducePlaceableOptions(const std::vector
       reducedOptions.push_back(option);
   }
 
-  //cout << "Reduced options for " << piece->id() << " from " << originalPlaceableOptions.size() << " to " << reducedOptions.size() << endl;
+  // cout << "Reduced options for " << piece->idWithColor() << " from " << originalPlaceableOptions.size() << " to " << reducedOptions.size() << endl;
   return reducedOptions;
+}
+
+
+std::string Piece::getColorForId(char id)
+{
+  switch (id)
+  {
+  case 'A':
+    return Color::YELLOW;  // looks orange!
+    break;
+  case 'B':
+    return Color::RED;
+    break;
+  case 'C':
+    return Color::BLUE;
+    break;
+  case 'D':
+    return Color::BRIGHT_WHITE;
+    break;
+  case 'E':
+    return Color::GREEN;
+    break;
+  case 'F':
+    return Color::WHITE;
+    break;
+  case 'G':
+    return Color::CYAN;
+    break;
+  case 'H':
+    return Color::BRIGHT_MAGENTA;
+    break;
+  case 'I':
+    return Color::BRIGHT_YELLOW;
+    break;
+  case 'J':
+    return Color::MAGENTA;
+    break;
+  case 'K':
+    return Color::BRIGHT_GREEN;
+    break;
+  case 'L':
+    return Color::BRIGHT_BLACK;
+    break;
+  default:
+    return "";
+    break;
+  }
 }
 
 Piece::Piece(char id, Geometry baseGeometry) :
@@ -122,7 +169,7 @@ void Piece::postInit(const BoardState &boardState)
 
 void Piece::drawBaseOrientation() const
 {
-  Piece::drawGeometry(_baseGeometry);
+  Piece::drawGeometry(_baseGeometry, Piece::getColorForId(_id));
   cout << endl;
 }
 
@@ -130,7 +177,7 @@ void Piece::drawAllOrientations() const
 {
   for (size_t i=0; i<_geometryOrientations.size(); i++) {
     cout << "orientation " << i << ": " << endl;
-    Piece::drawGeometry(_geometryOrientations[i]);
+    Piece::drawGeometry(_geometryOrientations[i], Piece::getColorForId(_id));
     cout << endl;
   }
 }
@@ -170,12 +217,17 @@ char Piece::id() const
   return _id;
 }
 
+std::string Piece::idWithColor() const
+{
+  return getColorForId(_id) + _id + Color::RESET;
+}
+
 size_t Piece::getExtent() const
 {
   return _baseGeometry.size();
 }
 
-void Piece::drawGeometry(const Geometry &geometry)
+void Piece::drawGeometry(const Geometry& geometry, const std::string& color)
 {
   int maxX = 0;
   int maxY = 0;
@@ -188,7 +240,7 @@ void Piece::drawGeometry(const Geometry &geometry)
   for (int r=0; r<=maxY; r++) {
     for (int c=0; c<=maxX; c++) {
       bool found = std::find(geometry.begin(), geometry.end(), Coord(c, r)) != geometry.end();
-      cout << (found ? "*" : " ");
+      cout << (found ? (color + "*" + Color::RESET) : " ");
     }
     cout << endl;
   }

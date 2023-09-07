@@ -126,10 +126,10 @@ int Game::mainLoop(string localFile)
 
 
       if(_board->removePlacedPiece(piece)) {
-        cout << "Success -> removed piece " << piece->id() << " from board" << std::endl;
+        cout << "Success -> removed piece " << piece->idWithColor() << " from board" << std::endl;
       }
       else {
-        cout << "Error -> could not remove piece " << piece->id() << " from board " << std::endl;
+        cout << "Error -> could not remove piece " << piece->idWithColor() << " from board " << std::endl;
       }
     }
     else if (input == "f") {
